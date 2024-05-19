@@ -17,3 +17,9 @@ y = 2 * torch.dot(x, x)
 print("===y===")
 print(y)
 
+y.backward()
+print("===x.grad===")
+print(x.grad)
+
+print("===x.grad 4*x===")
+print(x.grad == 4 * x)
