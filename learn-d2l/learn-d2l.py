@@ -1,8 +1,19 @@
+import os
 import torch
+import pandas as pd
+import numpy as np
+from matplotlib_inline import backend_inline
+from d2l import torch as d2l
 
-x = torch.arange(12, dtype=torch.float32)
+x = torch.arange(4.0)
+print("===x===")
+print(x)
 
-# show x
-print(x.numel())
+x.requires_grad_(True)
+print("===x.grad===")
+print(x.grad)
 
-exit(0)
+y = 2 * torch.dot(x, x)
+print("===y===")
+print(y)
+
