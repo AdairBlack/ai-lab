@@ -23,3 +23,9 @@ print(x.grad)
 
 print("===x.grad 4*x===")
 print(x.grad == 4 * x)
+
+x.grad.zero_()
+y = x * x
+y.backward(gradient=torch.ones(len(y)))  # Faster: y.sum().backward()
+print("===x.grad===")
+print(x.grad)
