@@ -1,31 +1,11 @@
 import os
 import torch
+import time
 import pandas as pd
 import numpy as np
 from matplotlib_inline import backend_inline
 from d2l import torch as d2l
 
-x = torch.arange(4.0)
-print("===x===")
-print(x)
+print("********learn d2l********")
 
-x.requires_grad_(True)
-print("===x.grad===")
-print(x.grad)
 
-y = 2 * torch.dot(x, x)
-print("===y===")
-print(y)
-
-y.backward()
-print("===x.grad===")
-print(x.grad)
-
-print("===x.grad 4*x===")
-print(x.grad == 4 * x)
-
-x.grad.zero_()
-y = x * x
-y.backward(gradient=torch.ones(len(y)))  # Faster: y.sum().backward()
-print("===x.grad===")
-print(x.grad)
