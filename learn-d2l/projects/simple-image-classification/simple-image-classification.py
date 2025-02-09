@@ -26,21 +26,24 @@ testloader = DataLoader(testset, batch_size=64, shuffle=False)
 class SimpleNet(nn.Module):
     def __init__(self):
         super(SimpleNet, self).__init__()
-        self.fc1 = nn.Linear(28 * 28, 128)
-        self.fc2 = nn.Linear(128, 64)
-        self.fc3 = nn.Linear(64, 10)
+        self.fc1 = nn.Linear(28 * 28, 256)
+        self.fc2 = nn.Linear(256, 128)
+        self.fc3 = nn.Linear(128, 64)
+        self.fc4 = nn.Linear(64, 32)
+        self.fc5 = nn.Linear(32, 10)
         self.to(device)
 
     def forward(self, x):
         x = x.view(-1, 28 * 28)
         x = torch.relu(self.fc1(x))
         x = torch.relu(self.fc2(x))
-        x = self.fc3(x)
+        x = torch.relu(self.fc3(x))
+        x = torch.relu(self.fc4(x))
+        x = self.fc5(x)
         return x
 
-def train():
+def train(net):
     # Initialize the network, loss function, and optimizer
-    net = SimpleNet()
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
 
@@ -70,7 +73,7 @@ def train():
 
     print('Finished Training')
 
-def test():
+def test(net):
     # Test the network on the test data
     correct = 0
     total = 0
@@ -87,8 +90,9 @@ def test():
 
 if __name__ == '__main__':
 
+    net = SimpleNet()
     # Train the network
-    train()
+    train(net)
 
     # Test the network
-    test()
+    test(net)
