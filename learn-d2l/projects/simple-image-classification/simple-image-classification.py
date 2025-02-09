@@ -38,7 +38,7 @@ class SimpleNet(nn.Module):
         x = self.fc3(x)
         return x
 
-if __name__ == '__main__':
+def train():
     # Initialize the network, loss function, and optimizer
     net = SimpleNet()
     criterion = nn.CrossEntropyLoss()
@@ -70,6 +70,7 @@ if __name__ == '__main__':
 
     print('Finished Training')
 
+def test():
     # Test the network on the test data
     correct = 0
     total = 0
@@ -83,3 +84,11 @@ if __name__ == '__main__':
             correct += (predicted == labels).sum().item()
 
     print(f'Accuracy of the network on the 10000 test images: {100 * correct / total:.2f}%')
+
+if __name__ == '__main__':
+
+    # Train the network
+    train()
+
+    # Test the network
+    test()
