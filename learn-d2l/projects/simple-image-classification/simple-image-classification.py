@@ -6,6 +6,9 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 
+# Set the device to be used for training
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 # Define transformations for the training and test sets
 transform = transforms.Compose([
     transforms.ToTensor(),
@@ -26,6 +29,7 @@ class SimpleNet(nn.Module):
         self.fc1 = nn.Linear(28 * 28, 128)
         self.fc2 = nn.Linear(128, 64)
         self.fc3 = nn.Linear(64, 10)
+        self.to(device)
 
     def forward(self, x):
         x = x.view(-1, 28 * 28)
@@ -34,45 +38,48 @@ class SimpleNet(nn.Module):
         x = self.fc3(x)
         return x
 
-# Initialize the network, loss function, and optimizer
-net = SimpleNet()
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
+if __name__ == '__main__':
+    # Initialize the network, loss function, and optimizer
+    net = SimpleNet()
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
 
-# Training loop
-for epoch in range(10):  # loop over the dataset multiple times
-    running_loss = 0.0
-    for i, data in enumerate(trainloader, 0):
-        inputs, labels = data
+    # Training loop
+    for epoch in range(20):  # loop over the dataset multiple times
+        running_loss = 0.0
+        for i, data in enumerate(trainloader, 0):
+            inputs, labels = data
+            inputs, labels = inputs.to(device), labels.to(device)
 
-        # Zero the parameter gradients
-        optimizer.zero_grad()
+            # Zero the parameter gradients
+            optimizer.zero_grad()
 
-        # Forward pass
-        outputs = net(inputs)
-        loss = criterion(outputs, labels)
-        
-        # Backward pass and optimize
-        loss.backward()
-        optimizer.step()
+            # Forward pass
+            outputs = net(inputs)
+            loss = criterion(outputs, labels)
 
-        # Print statistics
-        running_loss += loss.item()
-        if i % 100 == 99:  # print every 100 mini-batches
-            print(f'[Epoch {epoch + 1}, Batch {i + 1}] loss: {running_loss / 100:.3f}')
-            running_loss = 0.0
+            # Backward pass and optimize
+            loss.backward()
+            optimizer.step()
 
-print('Finished Training')
+            # Print statistics
+            running_loss += loss.item()
+            if i % 100 == 99:  # print every 100 mini-batches
+                print(f'[Epoch {epoch + 1}, Batch {i + 1}] loss: {running_loss / 100:.3f}')
+                running_loss = 0.0
 
-# Test the network on the test data
-correct = 0
-total = 0
-with torch.no_grad():
-    for data in testloader:
-        images, labels = data
-        outputs = net(images)
-        _, predicted = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
+    print('Finished Training')
 
-print(f'Accuracy of the network on the 10000 test images: {100 * correct / total:.2f}%')
+    # Test the network on the test data
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for data in testloader:
+            images, labels = data
+            images, labels = images.to(device), labels.to(device)
+            outputs = net(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    print(f'Accuracy of the network on the 10000 test images: {100 * correct / total:.2f}%')
