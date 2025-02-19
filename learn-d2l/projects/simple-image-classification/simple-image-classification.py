@@ -93,6 +93,10 @@ if __name__ == '__main__':
     net = SimpleNet()
     # Train the network
     train(net)
+    
+    # save the model
+    print('Saving the model...')
+    torch.save(net.state_dict(), 'model/simple-image-classification.pth')
 
     # Test the network
     test(net)
